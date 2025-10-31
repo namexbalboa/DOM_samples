@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exemplos de Eventos DOM e Window</title>
+  <style>
+    /* ======== ESTILO GERAL ======== */
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #222;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    section {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      max-width: 700px;
+    }
+
+    input, button, textarea {
+      display: block;
+      margin: 10px 0;
+      padding: 8px 10px;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    #caixa {
+      width: 100%;
+      height: 120px;
+      background: lightblue;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-weight: bold;
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    #log {
+      background: #111;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 6px;
+      height: 250px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    small {
+      color: #555;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎯 Demonstração de Eventos DOM + Window</h1>
+  <p style="text-align:center;">Interaja com os elementos abaixo e veja os eventos sendo disparados!</p>
+
+  <!-- ======== EVENTOS DOM ======== -->
+  <section>
+    <h2>🖱️ Eventos DOM</h2>
+
+    <button id="btn">Clique ou clique duas vezes aqui</button>
+    <input id="campo" type="text" placeholder="Digite algo..." />
+    <textarea id="texto" placeholder="O que você digitar acima aparece aqui"></textarea>
+
+    <form id="form">
+      <input type="text" placeholder="Digite algo e envie o formulário" />
+      <button type="submit">Enviar formulário</button>
+    </form>
+
+    <div id="caixa">Passe o mouse aqui</div>
+  </section>
+
+  <!-- ======== EVENTOS WINDOW ======== -->
+  <section>
+    <h2>🌐 Eventos Window</h2>
+    <p>Tente redimensionar a janela, mudar de aba, rolar a página, ou ficar offline.</p>
+    <div id="log"></div>
+  </section>
+
+  <script>
+    const logBox = document.getElementById('log');
+    const log = (msg) => {
+      const time = new Date().toLocaleTimeString();
+      logBox.innerHTML += `[${time}] ${msg}<br>`;
+      logBox.scrollTop = logBox.scrollHeight;
+    };
+
+    /* ======================================================
+       EVENTOS DOM
+    ====================================================== */
+
+    const btn = document.getElementById('btn');
+    const campo = document.getElementById('campo');
+    const texto = document.getElementById('texto');
+    const form = document.getElementById('form');
+    const caixa = document.getElementById('caixa');
+
+    // 1. click
+    btn.addEventListener('click', () => log('🖱️ Evento CLICK no botão'));
+
+    // 2. dblclick
+    btn.addEventListener('dblclick', () => log('⚡ Evento DBLCLICK no botão'));
+
+    // 3. mousedown / 4. mouseup
+    caixa.addEventListener('mousedown', () => {
+      caixa.style.background = 'lightcoral';
+      log('👇 Evento MOUSEDOWN no quadrado');
+    });
+    caixa.addEventListener('mouseup', () => {
+      caixa.style.background = 'lightblue';
+      log('👆 Evento MOUSEUP no quadrado');
+    });
+
+    // 5. mousemove
+    caixa.addEventListener('mousemove', (e) => {
+      caixa.textContent = `X:${e.offsetX} Y:${e.offsetY}`;
+    });
+
+    // 6. keydown / 7. keyup
+    campo.addEventListener('keydown', () => log('⌨️ Tecla pressionada (keydown)'));
+    campo.addEventListener('keyup', () => log('⌨️ Tecla liberada (keyup)'));
+
+    // 8. input
+    campo.addEventListener('input', () => {
+      texto.value = campo.value;
+      log('✏️ Evento INPUT - texto atualizado');
+    });
+
+    // 9. change
+    campo.addEventListener('change', () => log('🪄 Evento CHANGE (valor alterado e perdeu foco)'));
+
+    // 10. submit
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      log('📨 Evento SUBMIT - formulário enviado');
+    });
+
+    // Extra: load (executado no final da página)
+    window.addEventListener('load', () => log('✅ Página completamente carregada (load)'));
+
+    /* ======================================================
+       EVENTOS WINDOW
+    ====================================================== */
+
+    // DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => log('📄 DOMContentLoaded - HTML parseado'));
+
+    // resize
+    window.addEventListener('resize', () => log(`📐 Janela redimensionada: ${window.innerWidth}x${window.innerHeight}`));
+
+    // scroll
+    window.addEventListener('scroll', () => log('🌀 Scroll detectado'));
+
+    // focus / blur
+    window.addEventListener('focus', () => log('👀 Aba ganhou foco'));
+    window.addEventListener('blur', () => log('😴 Aba perdeu foco'));
+
+    // beforeunload
+    window.addEventListener('beforeunload', (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+      log('⚠️ Tentando sair da página');
+    });
+
+    // error
+    window.addEventListener('error', (err) => log(`💥 Erro detectado: ${err.message}`));
+
+    // hashchange
+    window.addEventListener('hashchange', () => log(`🔗 Hash da URL mudou: ${location.hash}`));
+
+    // online / offline
+    window.addEventListener('online', () => log('🌐 Conexão restabelecida'));
+    window.addEventListener('offline', () => log('❌ Conexão perdida'));
+
+    // visibilitychange
+    document.addEventListener('visibilitychange', () => {
+      log(document.hidden ? '🙈 Aba oculta' : '👁️ Aba visível novamente');
+    });
+
+    // Simula erro pra testar evento "error"
+    setTimeout(() => { try { naoExiste(); } catch (e) {} }, 1500);
+  </script>
+</body>
+</html>
